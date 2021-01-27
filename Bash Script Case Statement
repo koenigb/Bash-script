@@ -1,0 +1,26 @@
+#!/bin/bash
+#Stopping and starting netdata alarms for slack and email
+        echo -e " Do you want to stop or start notications?: \n Select 1 to stop notifcations for netdata  \n Select 2 to start notifications for netdata \n  Enter your choice: "
+read opt
+if [ -z $opt  ]
+then
+        echo No selection
+        exit 1
+fi
+case $opt in
+1 )
+        echo We will now stop notifcations to slack and email
+        sed -ci '/SEND_EMAIL/s/"YES"/"NO"/g' /etc/netdata/health_alarm_notify.conf && sed -ci '/SEND_SLACK/s/"YES"/"NO"/g' /etc/netdata/health_alarm_notify.conf
+        sudo systemctl restart netdata
+        sudo systemctl status netdata
+        ;;
+2 )
+        echo We will now start notifcations to  slack and email
+        sed -ci '/SEND_EMAIL/s/"NO"/"YES"/g' /etc/netdata/health_alarm_notify.conf && sed -ci '/SEND_SLACK/s/"NO"/"YES"/g' /etc/netdata/health_alarm_notify.conf
+        sudo systemctl restart netdata
+        sudo systemctl status netdata
+        ;;
+* )
+        echo Wrong Selection
+        ;;
+esac
